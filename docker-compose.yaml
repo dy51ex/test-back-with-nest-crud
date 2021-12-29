@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+    networks:
+      back:
+        aliases:
+        - db
+
+  adminer:
+    image: adminer
+    ports:
+      - 3001:8080
+    networks:
+      back:
+        aliases:
+        - adminer
+
+  app:
+    build: ./back
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    networks:
+      back:
+        aliases:
+        - app
+    
+
+networks:
+  back:
+    ipam:
+      config:
+        - subnet: 172.199.0.0/24
